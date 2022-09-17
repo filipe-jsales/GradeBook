@@ -2,61 +2,46 @@
 
 #include <iostream>
 using std::cout;
-using std::endl;
-
-#include <cmath>
 
 //Instanciação de variáveis statics
 int GradeBook::numGradeBooks = 0;
 int GradeBook::numAlunosEscola = 0;
-const string GradeBook::NOTAS[ NUMERODENOTAS ] = {"E","B","R","I"};
+int GradeBook::quantidadeSalaDeAula = 0;
+const int GradeBook::MAXNUMALUNOSESCOLA = 40;
+const int GradeBook::MAXQUANTIDADESALASDEAULA = 2;
 
-int GradeBook::getNumAlunosEscola( )
-{ 
-    return numAlunosEscola; 
-}
 
 
 GradeBook::GradeBook( )
-:histPtr(0), courseName(""), numAlunos( 0 ), MAXSIZENAME( 9 ), check( false ), numAlunosCadastrados( 0 )
+:courseName(""), numAlunos( 0 ), MAXSIZENAME( 9 ), check( false )
 {  
       numGradeBooks++;  
-
 }
 
 GradeBook::GradeBook( string name, int numAlunos )
-:MAXSIZENAME( 9 ), check( false ), numAlunosCadastrados( 0 )
+:MAXSIZENAME( 9 ), check( false )
 {
-    nextEntrieInHist = 0;
-    histSize = 0;
     setCourseName( name );
-    setNumAlunos( numAlunos );  
+    setNumAlunos( numAlunos );
 
     numGradeBooks++;
 }
 
 GradeBook::GradeBook( int numAlunos )
-:courseName(""), MAXSIZENAME( 9 ), check( false ), numAlunosCadastrados( 0 )
+:courseName(""), MAXSIZENAME( 9 ), check( false )
 {
-    nextEntrieInHist = 0;
-    histSize = 0;
-    setNumAlunos( numAlunos ); 
+    setNumAlunos( numAlunos );
 
     numGradeBooks++;
 }
 
 GradeBook::GradeBook( const GradeBook& other )
-:MAXSIZENAME( other.MAXSIZENAME ), check( other.check ), numAlunosCadastrados( 0 )
+:MAXSIZENAME( other.MAXSIZENAME ), check( other.check )
 {
     this->courseName = other.courseName;
     setNumAlunos( other.numAlunos );
 
     numGradeBooks++;
-}
-
-GradeBook::~GradeBook( )
-{
-    delete [] histPtr; 
 }
 
 /* GradeBook::GradeBook( const GradeBook& other )
@@ -79,42 +64,96 @@ GradeBook::~GradeBook( )
 
 
 void GradeBook::setNumAlunos( int numAlunos )
-{    
-    if ( GradeBook::numAlunosEscola > 0 )
-        GradeBook::numAlunosEscola -= this->numAlunos;
-        
-    //Valor inválido para numAlunos
-    if ( numAlunos <= 0 )
-    {
-        numAlunos = 0;
-        return;
-    }    
-   
-    this->numAlunos = numAlunos;
-    GradeBook::numAlunosEscola += this->numAlunos;
-    cadastrarRegInHist( numAlunos );  
+{
+    cout << "Numero de alunos na escola " << GradeBook::numAlunosEscola << '\n';
+    cout << "Inscricao de novos alunos " << numAlunos << '\n';
+    if ( numAlunos > 0 )
+        if ( ( numAlunos + GradeBook::numAlunosEscola ) <= MAXNUMALUNOSESCOLA )
+        {
+            this->numAlunos = numAlunos;
+            GradeBook::numAlunosEscola += this->numAlunos;            
+        }
+        else
+            if( ( MAXNUMALUNOSESCOLA - GradeBook::numAlunosEscola ) > 0 )
+            {
+              this->numAlunos =  MAXNUMALUNOSESCOLA - GradeBook::numAlunosEscola;
+              GradeBook::numAlunosEscola += this->numAlunos; 
+            }
+            else
+              this->numAlunos = 0;
+    else
+        this->numAlunos = 0;
+
+
+    cout << "Novos alunos que conseguiram a matricula " << this->numAlunos << "\n\n";
 }
+
+void GradeBook::setQuantidadeSalaDeAula( int quantidadeSalaDeAula )
+{
+    cout << "Numero salas de aula na escola " << GradeBook::quantidadeSalaDeAula << '\n';
+    
+    if (quantidadeSalaDeAula < MAXQUANTIDADESALASDEAULA)
+    {
+        GradeBook::quantidadeSalaDeAula = quantidadeSalaDeAula;
+    }
+    GradeBook::quantidadeSalaDeAula = quantidadeSalaDeAula;
+
+   
+}
+
+// int GradeBook::getQuantidadeSalaDeAula()
+// {
+    // metodo implementado no .h usando inline function
+// }
 
 string GradeBook::getCourseName( )
 {
     return courseName;
-} 
+}
+
+void GradeBook::setCoordinatorName( string coordinatorName)
+{
+    if ( coordinatorName.length( ) <= MAXSIZENAME )
+        this -> coordinatorName = coordinatorName;
+    else   
+        {
+            this->coordinatorName = coordinatorName.substr( 0, MAXSIZENAME );
+            cout << "Nome do coordenador alterado. Excedeu o valor maximo de 9 caracteres. \n";
+        }
+}
+
+string GradeBook::getCoordinatorName( ) const
+{
+    return coordinatorName;
+}
+
+bool GradeBook::getIsFull( ) const
+{
+    return this->isFull;
+}
+
+void GradeBook::setIsFull( bool isFull )
+{
+    if (numAlunosEscola < MAXNUMALUNOSESCOLA)
+    {
+        this->isFull = false;
+        return;
+    }
+    this->isFull = isFull;
+}
 
 void GradeBook::displayMessage( bool check ) const
 {
-    if( !check )
-        return;
-    if( courseName.size( ) > 0 )
+    if( check )
     {
-        cout << "Welcome to the Grade Book for course " << courseName << '.'
-        << " A Turma tem " << numAlunos << " aluno.\n"; 
-        printListaAlunos( );
-        cout << "Imprimindo histórico de alunos.\n";
-        printHist( );
-        return;
-    }                 
+        if( courseName.size( ) > 0 )
+            cout << "Welcome to the Grade Book for course " << courseName << '.';          
+        else
+            cout << "Welcome to the Grade Book. Curso sem nome.";
 
-    cout << "Welcome to the Grade Book. Curso sem nome.";
+        cout << " A Turma tem " << numAlunos << " aluno.\n";  
+    }
+
 }
 
 void GradeBook::displayMessage( bool check )
@@ -122,95 +161,33 @@ void GradeBook::displayMessage( bool check )
     //Atribuição dentro da classe
     this->check = check;
 
-    if( !this->check )
-        return;
-    if( courseName.size( ) > 0 )
+    if( this-check )
     {
-        cout << "Welcome to the Grade Book for course " << courseName << '.'
-        << " A Turma tem " << numAlunos << " aluno:\n"; 
-        printListaAlunos( );
-        cout << "Imprimindo historico de alunos.\n";
-        printHist( );
-        return;
-    }         
+        if( courseName.size( ) > 0 )
+            cout << "Welcome to the Grade Book for course " << courseName << '.';          
+        else
+            cout << "Welcome to the Grade Book. Curso sem nome.";
 
-    cout << "Welcome to the Grade Book. Curso sem nome.\n";    
-}
-
-void GradeBook::printGrades( )
-{
-    for( int i = 0; i < NUMERODENOTAS; i++ )
-        cout << NOTAS[ i ] << ' ' << '(' <<&NOTAS[ i ] << ')' << '\n';
-    
-}
-
-void GradeBook::cadastrarAlunoGradeBook( const string &novoAluno )
-{
-    //O vector alunos pode crescer dinamicamente
-    //Mas só pode aceitar numAlunos
-    
-    if( alunos.size( ) < numAlunos ) 
-    {
-        numAlunosCadastrados++;
-        alunos.push_back( new string(novoAluno) );        
-        return;
+        cout << " A Turma tem " << numAlunos << " aluno.\n";  
     }
 
-    cout << "Nao eh possivel cadastrar " << novoAluno << '.' << " Turma cheia.\n";
-
 }
-
-void GradeBook::printListaAlunos( ) const
+int GradeBook::getMAXQUANTIDADESALASDEAULA()
 {
-    for( int i = 0; i < alunos.size( ); i++ )
-        cout << alunos[i] << '\t' << *alunos[ i ] << endl;
+    return MAXQUANTIDADESALASDEAULA;
 }
 
- void GradeBook::cadastrarRegInHist( int numAlunos )
- {
-    if ( nextEntrieInHist < histSize )
+void GradeBook::expulsarAluno()
+{
+    if(numAlunosEscola<=0)
     {
-        histPtr[ nextEntrieInHist++ ] = numAlunos;
+        numAlunosEscola = 0;
         return;
     }
+    numAlunosEscola -=1;
+}
 
-    if( histSize == 0 )
-    {
-        histSize = 1;
-        histPtr = new int[ histSize ];
-        histPtr[ nextEntrieInHist++ ] = numAlunos;
-        return;
-    }       
-
-    alocarHist( numAlunos );    
- }
-
- void GradeBook::printHist( ) const
- {
-    for( int i = 0; i < nextEntrieInHist; i++ )
-        cout << histPtr[ i ] << '\n'; 
-    
- }
-
- void GradeBook::alocarHist( int numAlunos ) 
- {    
-    //cout << "Allocating...\n";
-    int *histTemp = new int[ histSize ];
-    for( int i = 0; i < nextEntrieInHist; i++ )
-        histTemp[ i ] = histPtr[ i ];
-
-    delete [] histPtr;
-    histSize += int( ceil( histSize * 0.5 ) );//Aumenta a memória em 50%
-    //cout << "New histSize " << histSize << '\n';
-    //cout << "And nextEntrieInHist " << nextEntrieInHist << '\n';
-    int *histPtr = new int[ histSize ];
-    for( int i = 0; i < nextEntrieInHist; i++ )
-        histPtr[ i ] = histTemp[ i ];
-    histPtr[ nextEntrieInHist++ ] = numAlunos;
-    //cout << "histPtr[ nextEntrieInHist ] " << histPtr[ nextEntrieInHist - 1 ] << '\n';
-    //cout << "And nextEntrieInHist " << nextEntrieInHist << '\n';
-    //cout << "numAlunos " << numAlunos << '\n';
-
-    delete [] histTemp;     
-      
- }
+void GradeBook::showWarning(const string& warning ) 
+{
+    cout << "Warning all students!\n" << warning;
+}

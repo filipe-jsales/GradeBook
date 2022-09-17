@@ -5,35 +5,43 @@
 //This is where the execution of program begins
 int main()
 {
-    
-   //Apenas 4 turmas podem ser criadas
-   //GradeBook.cpp: const int GradeBook::NUMTURMAS = 4;
-   GradeBook gradebook1( "Math", 3 );
-   GradeBook *gradebookPtr;
-   int novosAlunos = 5;
+ 
+   cout << "Usando sobrecarga e parametros default.\n\n";
 
-   //Criando uma lista de alunos
-   vector< string * > alunos;
-   alunos.push_back( new string( "Noemi") );  
-   alunos.push_back( new string( "Sopia") );
-   alunos.push_back( new string( "Catarina") ); 
-   alunos.push_back( new string( "Raphael") ); 
-   alunos.push_back( new string( "Ursula") ); 
-   alunos.push_back( new string( "Natasha") ); 
+   GradeBook gradebook0( "Biology", 3 );
+   GradeBook gradebook1( "Math" );
+   const GradeBook GRADEBOOK2( "Physics", 2 );
+
+   GradeBook gradebook3( "Geography", 10 );
+   GradeBook gradebook4( 3 );
+   const GradeBook GRADEBOOK5( GRADEBOOK2 );
+   GradeBook gradebook6( "English", 10 );
+
+   gradebook3.setQuantidadeSalaDeAula(2);
+   gradebook3.setCoordinatorName("Vinicius");
+   gradebook3.setIsFull( false );
+   cout << "\nDuas versoes do metodo displayMessage: const e nao const\n";
+   gradebook0.displayMessage( );
+   gradebook1.displayMessage( );
+   GRADEBOOK2.displayMessage( );
+   GRADEBOOK5.displayMessage( );
+   gradebook3.displayMessage( );//Objects não const podem usar métodos const
+   gradebook6.displayMessage( );
+   gradebook6.showWarning("Aviso a todos os estudantes!");
+   //ERROR: tentando usar método não const
+   //GRADEBOOK5.setNumAlunos( 10 );
+
+   //Variável pertence a classe
+   cout << "\nTestando atributos statics.\n";
+   cout << "Alunos que conseguiram vaga na escola " << gradebook3.getnumAlunosEscola( ) << '\n';
+   gradebook3.expulsarAluno( ); //-1 aluno
+   cout << "Alunos que conseguiram vaga na escola " << gradebook3.getnumAlunosEscola( ) << '\n';
+   cout << "Numero de GradeBooks instanciados: " << gradebook3.getnumGradeBooks( ) << '\n';
+   cout << "Nome do coordenador: " << gradebook3.getCoordinatorName( ) << '\n';
+   cout << "Sala cheia? " << gradebook3.getIsFull( ) << '\n';
+   cout << "Quantidade maxima de salas de aula: " << gradebook3.getMAXQUANTIDADESALASDEAULA( ) << '\n';
+   cout << "Quantidade de salas de aula cadastradas: " << gradebook3.getQuantidadeSalaDeAula( ) << '\n';
+   cout << "Numero de GradeBooks instanciados: " << gradebook0.getnumGradeBooks( ) << '\n';
    
-   gradebookPtr = new GradeBook( "Geografia", 3 );
-
-   gradebookPtr->displayMessage( );
-
-   gradebookPtr->setNumAlunos( novosAlunos );
-
-   gradebookPtr->displayMessage( );   
-
-   //Cadastrando os alunos da lista no gradebook de Geografia
-   for( int i = 0; i < alunos.size(); i++ )
-      gradebookPtr->cadastrarAlunoGradeBook( *alunos[ i ] );
-   
-   gradebookPtr->displayMessage( );
-
    return 0;
 }
