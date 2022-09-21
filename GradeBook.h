@@ -9,7 +9,7 @@ class GradeBook
 public:
 
     GradeBook ( );    
-    GradeBook( string , int = 0 );
+    GradeBook( const string & , int = 0 );
     GradeBook( int );
     GradeBook( const GradeBook & );
     

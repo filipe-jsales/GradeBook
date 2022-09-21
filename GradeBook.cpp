@@ -18,7 +18,7 @@ GradeBook::GradeBook( )
       numGradeBooks++;  
 }
 
-GradeBook::GradeBook( string name, int numAlunos )
+GradeBook::GradeBook( const string& name, int numAlunos )
 :MAXSIZENAME( 9 ), check( false )
 {
     setCourseName( name );
